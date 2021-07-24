@@ -48,25 +48,25 @@ public class Main extends Application
 			
 			
 			tf.setOnAction(e -> {
-				try
+			try
+			{
+				int number = Integer.parseInt(tf.getText().trim());
+				toServer.writeInt(number);
+				toServer.flush();
+				
+				boolean isPrime = fromServer.readBoolean();
+				
+				ta.appendText("Number is " + number  + "\n");
+				if (isPrime)
 				{
-					int number = Integer.parseInt(tf.getText().trim());
-					toServer.writeInt(number);
-					toServer.flush();
-					
-					boolean isPrime = fromServer.readBoolean();
-					
-					ta.appendText("Number is " + number  + "\n");
-					if (isPrime)
-					{
-						ta.appendText(number + " is prime.\n");
-					}
-					else
-					{
-						ta.appendText(number + " is not prime.\n");
-					}
-					
+					ta.appendText(number + " is prime.\n");
 				}
+				else
+				{
+					ta.appendText(number + " is not prime.\n");
+				}
+				
+			}
 			 catch(IOException ex)
 			{
 				ex.printStackTrace();
@@ -83,7 +83,6 @@ public class Main extends Application
 			{
 				ta.appendText(ex.toString() + "\n");
 			}
-		
 	}
 	
 	public static void main(String[] args)

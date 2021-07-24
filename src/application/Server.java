@@ -26,57 +26,44 @@ public class Server extends Application
 		primaryStage.show();
 		
 		new Thread(() -> {
-			try
+		try
+		{
+			ServerSocket serverSocket = new ServerSocket(8000);
+			Platform.runLater(() ->
+				ta.appendText("Server started at " + new Date() + "\n"));
+			Socket socket = serverSocket.accept();
+			
+			DataInputStream inputFromClient = new DataInputStream(socket.getInputStream());
+			DataOutputStream outputToClient = new DataOutputStream(socket.getOutputStream());
+			
+			
+			while (true)
 			{
-				ServerSocket serverSocket = new ServerSocket(8000);
-				Platform.runLater(() ->
-					ta.appendText("Server started at " + new Date() + "\n"));
-				Socket socket = serverSocket.accept();
-				
-				DataInputStream inputFromClient = new DataInputStream(socket.getInputStream());
-				DataOutputStream outputToClient = new DataOutputStream(socket.getOutputStream());
-				
 				boolean isPrime = true;
-				while (true)
+				int number = inputFromClient.readInt();
+			
+				for (int i = 2; i <= number / 2; i++)
 				{
-					int number = inputFromClient.readInt();
-//					if (number == 2)
-//					{
-//						isPrime = true;
-//					}
-//					
-//					else if (number == 0 || number == 1 || number % 2 == 0)
-//					{
-//						isPrime = false;
-//					}
-					
-					
-						for (int i = 2; i <= number / 2; i++)
-						{
-							int remainder = number % i; 
-							if (remainder == 0)
-							{
-								isPrime = false;
-								break;
-							}
-						}
-						
-					
-				//	double area = radius * radius * Math.PI;
-					
-					outputToClient.writeBoolean(isPrime);
-					
-					Platform.runLater(() ->
+					int remainder = number % i; 
+					if (remainder == 0)
 					{
-						ta.appendText("Number received from client to check prime number is: " + number + "\n");
-						//ta.appendText("Area is: " + isPrime + "\n");
-					});
+						isPrime = false;
+						break;
+					}
 				}
+
+				outputToClient.writeBoolean(isPrime);
+				
+				Platform.runLater(() ->
+				{
+					ta.appendText("Number received from client to check prime number is: " + number + "\n");
+				});
 			}
-			catch (IOException ex)
-			{
-				ex.printStackTrace();
-			}
+		}
+		catch (IOException ex)
+		{
+			ex.printStackTrace();
+		}
 		}).start();
 	}
 
